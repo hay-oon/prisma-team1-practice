@@ -135,10 +135,10 @@ model ExchangeRequest {
   id                          String      @id @default(uuid())
   userId                      String
   user                        User        @relation(fields: [userId], references: [id])
-  availableWithdrawalAmount   Int         // 출금 가능 수익금
-  withdrawnAmount             Int         // 출금 완료된 수익금
+  availableWithdrawalAmount   Int       
+  withdrawnAmount             Int         
   status                      WithdrawalStatus
-  withdrawalDate              DateTime    @default(now()) // 출금 신청 일시
+  withdrawalDate              DateTime    @default(now()) 
   bankAccountId               String
   bankAccount                 BankAccount @relation(fields: [bankAccountId], references: [id])
   createdAt                   DateTime    @default(now())
@@ -158,7 +158,7 @@ model SaleHistory {
 model Count {
   id                String       @id @default(uuid())
   userId            String
-  type              String       // Aitype이 정의되지 않음 -> String으로 대체
+  type              String       
   freeCount         Int
   purchasedCount    Int
   updatedAt         DateTime     @default(now())
