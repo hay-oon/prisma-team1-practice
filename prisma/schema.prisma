@@ -88,7 +88,13 @@ enum InquiryType {
   OTHER       // 기타
 }
 
+enum StatusType {
+PENDING
+PROCESSING
+COMPLETED
+}
 
+ 
 enum TransactionType {
   EARNING //적립
   CHARGE  //충전
@@ -267,13 +273,14 @@ model Talktalkbear_frequentChat {
 }
 
 model Inquiry {
-  id         Int      @id @default(autoincrement())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  type       InquiryType
-  message    String
-  email      String
-  contact    String
+  id            Int      @id @default(autoincrement())
+  userId        String
+   user          User     @relation(fields: [userId], references: [id])
+  type          InquiryType
+  message       String
+  email         String
+  contact       String
+  inquiryStatus StatusType
 }
 
 model BerryTransaction{
@@ -284,5 +291,20 @@ amount        Int
 type          TransactionType
 paymentMethod PaymentMethod
 createdAt     DateTime       @defaultAt
-description   String?     
+description   String
+}
+
+model exchangeLog {
+  id                          String      @id @default(uuid())
+  userId                      String
+  user                        User     @relation(fields: [userId], references: [id])
+  requireWithdrawalAmount     Int  
+  availableWithdrawalAmount   Int 
+  withdrawnAmount             Int 
+  status                      WithdrawalStatus   
+  withdrawalDate              DateTime  @default(now()) 
+  bankAccount                 BankAccount @relation(fields: [userId], references: [userId])
+  createdAt                   DateTime @default
+
+
 }
