@@ -34,6 +34,80 @@ enum QuestionType {
   문제
 }
 
+enum ChatMode {
+
+  MACHINE
+  ANGEL
+}
+
+enum SaleItemStatus {
+  SALE         
+  SAVED       
+  UNDER_REVIEW 
+  NEEDS_MODIFY 
+  STOPPED       
+}
+
+enum Category {
+  Regular       //정시
+  Rolling       //수시
+  Internal      //내신
+  Essay         //논술
+  Korean        //국어
+  English       //영어
+  Math          //수학
+  SocialScience //사탐
+  Science       //과탐
+  Arts          //예체능
+  Other         //기타
+}
+
+
+enum jobCategory {
+  학원강사
+  학교선생님
+  학생
+  출판
+  기타
+  
+}
+enum WithdrawalStatus { 
+  PENDING 
+  APPROVED 
+  REJECTED 
+}
+
+enum InquiryType {
+  USAGE       // 이용 관련 문의
+  PARTNERSHIP // 제휴 관련 문의
+  PAYMENT     // 결제 관련 문의
+  REFUND      // 환불 관련 문의
+  WITHDRAWAL  // 탈퇴 관련 문의
+  ERROR       // 오류 신고
+  SUGGESTION  // 건의 사항
+  OTHER       // 기타
+}
+
+enum StatusType {
+PENDING
+PROCESSING
+COMPLETED
+}
+
+ 
+enum TransactionType {
+  EARNING //적립
+  CHARGE  //충전
+  USAGE   //사용
+  REFUND  //환불
+}
+
+enum PaymentMethod {
+  CREDIT_CARD 
+  BANK_TRANSFER
+  DEPOSIT
+}
+
 model pastExamKorean {
   id                      Int                       @id @default(autoincrement())
   examType                ExamType
@@ -57,4 +131,180 @@ model pastExamKoreanQuestions {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   pastExamKorean   pastExamKorean @relation(fields: [pastExamKoreanId], references: [id])
+}
+
+
+model User {
+  id                String @id @default(uuid())
+  email             String @unique
+  nickname          String
+  profileId         String
+  profile           Profile   @relation(fields: [profileId], references: [id])
+  bankAccountId     String
+  bankAccount       BankAccount @relation(fields: [bankAccountId], references: [id])
+  berryBalance      Int       @default(5)
+  transactions      BerryTransaction[]
+  inquiries         Inquiry[]
+  AiFreeCount       Int      @default(2)
+  purchaseItems     PurchaseItem[]
+  saleHistories     SaleHistory[]
+  exchanges         ExchangeRequest[]
+  createdAt         DateTime  @default(now())
+}
+
+model ExchangeRequest {
+  id                          String      @id @default(uuid())
+  userId                      String
+  user                        User        @relation(fields: [userId], references: [id])
+  availableWithdrawalAmount   Int       
+  withdrawnAmount             Int         
+  status                      WithdrawalStatus
+  withdrawalDate              DateTime    @default(now()) 
+  bankAccountId               String
+  bankAccount                 BankAccount @relation(fields: [bankAccountId], references: [id])
+  createdAt                   DateTime    @default(now())
+}
+
+model SaleHistory {
+  id                String           @id @default(uuid())
+  saleItemId        Int
+  saleDate          DateTime         @default(now())
+  sellerId          String
+  seller            User             @relation(fields: [sellerId], references: [id])
+  status            SaleItemStatus
+  buyerId           String
+  buyer             User             @relation(fields: [buyerId], references: [id])
+}
+
+model Count {
+  id                String       @id @default(uuid())
+  userId            String
+  type              String       
+  freeCount         Int
+  purchasedCount    Int
+  updatedAt         DateTime     @default(now())
+  createdAt         DateTime     @default(now())
+}
+
+model Products {
+  id                  String     @id @default(uuid())
+  img                 String
+  score               Int        @default(0)
+  berryPrice          Int
+  userId              String
+  profileId           String
+  profile             Profile    @relation(fields: [profileId], references: [id])
+  tags                Tags[]
+  reviews             Reviews[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  purchasedData       PurchasedData[]
+  itemCategory        Category
+  itemCategorySub     Category
+  downloadLink        String
+  title               String
+  content             String
+  @@index(fields: [title])
+  @@index(fields: [userId])
+}
+
+model Tags {
+  id        String      @id @default(uuid())
+  name      String
+  products  Products[]
+}
+
+model Reviews {
+  id          String    @id @default(uuid())
+  content     String
+  productId   String
+  products    Products  @relation(fields: [productId], references: [id])
+}
+
+model Profile {
+  id            String   @id @default(uuid())
+  profileImg    String
+  job           jobCategory
+  aboutMe       String
+  userId        String    @unique
+  uploadedDatas Products[]
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model Teachergram_question {
+  id            String @id @default(uuid())
+  userId        String
+  question      String
+  questionType  String
+  user          User   @relation(fields: [userId], references: [id])
+}
+
+model Teachergram_result {
+  id           String @id @default(uuid())
+  userId       String
+  questionId   String
+  question     Teachergram_question @relation(fields: [questionId], references: [id])
+  userAnswer   Int
+  user         User   @relation(fields: [userId], references: [id])
+}
+
+model Talktalkbear {
+  id            String @id @default(uuid())
+  userId        String
+  user          User   @relation(fields: [userId], references: [id])
+  chats         Talktalkbear_result[]
+  createdAt     DateTime @default(now())
+}
+
+model Talktalkbear_result {
+  id           Int         @id @default(autoincrement())
+  chatUser     jobCategory
+  chatUserID   String
+  message      String
+  response     String
+  mode         ChatMode    @default(MACHINE)
+  createdAt    DateTime    @default(now())
+}
+
+model Talktalkbear_frequentChat {
+  id         Int      @id @default(autoincrement())
+  message    String
+  updatedAt  DateTime  @default(now())
+}
+
+model Inquiry {
+  id            Int      @id @default(autoincrement())
+  userId        String
+   user          User     @relation(fields: [userId], references: [id])
+  type          InquiryType
+  message       String
+  email         String
+  contact       String
+  inquiryStatus StatusType
+}
+
+model BerryTransaction{
+id            Int            @id @default(autoincrement())   
+userId        Int
+user          User           @relation(fields: [userId], references: [id]) 
+amount        Int
+type          TransactionType
+paymentMethod PaymentMethod
+createdAt     DateTime       @defaultAt
+description   String
+}
+
+model exchangeLog {
+  id                          String      @id @default(uuid())
+  userId                      String
+  user                        User     @relation(fields: [userId], references: [id])
+  requireWithdrawalAmount     Int  
+  availableWithdrawalAmount   Int 
+  withdrawnAmount             Int 
+  status                      WithdrawalStatus   
+  withdrawalDate              DateTime  @default(now()) 
+  bankAccount                 BankAccount @relation(fields: [userId], references: [userId])
+  createdAt                   DateTime @default
+
+
 }
