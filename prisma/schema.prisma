@@ -138,10 +138,10 @@ model User {
   id                String @id @default(uuid())
   email             String @unique
   nickname          String
-  profileId         String?
-  profile           Profile?   @relation(fields: [profileId], references: [id])
-  bankAccountId     String?
-  bankAccount       BankAccount? @relation(fields: [bankAccountId], references: [id])
+  profileId         String
+  profile           Profile   @relation(fields: [profileId], references: [id])
+  bankAccountId     String
+  bankAccount       BankAccount @relation(fields: [bankAccountId], references: [id])
   berryBalance      Int       @default(5)
   transactions      BerryTransaction[]
   inquiries         Inquiry[]
@@ -223,9 +223,9 @@ model Reviews {
 
 model Profile {
   id            String   @id @default(uuid())
-  profileImg    String?
+  profileImg    String
   job           jobCategory
-  aboutMe       String?
+  aboutMe       String
   userId        String    @unique
   uploadedDatas Products[]
   user          User      @relation(fields: [userId], references: [id])
@@ -273,9 +273,9 @@ model Talktalkbear_frequentChat {
 }
 
 model Inquiry {
-  id            Int      @id @default(autoincrement())
-  userId        String
-   user          User     @relation(fields: [userId], references: [id])
+  id            Int      @id @default(autoincrement())
+  userId        String
+   user          User     @relation(fields: [userId], references: [id])
   type          InquiryType
   message       String
   email         String
