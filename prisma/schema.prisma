@@ -12,3 +12,49 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum ExamType {
+  수능
+  모의고사
+  LEET
+  사관학교
+  경찰
+  임용
+}
+
+enum ExamGrade {
+  기타
+  고3
+  고2
+  고1
+}
+
+enum QuestionType {
+  지문
+  문제
+}
+
+model pastExamKorean {
+  id                      Int                       @id @default(autoincrement())
+  examType                ExamType
+  examYear                Int
+  examMonth               Int
+  examGrade               ExamGrade
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  PastExamKoreanQuestions pastExamKoreanQuestions[]
+
+  @@index(fields: [examType, examYear, examMonth, examGrade])
+}
+
+model pastExamKoreanQuestions {
+  id               Int            @id @default(autoincrement())
+  pastExamKoreanId Int
+  questionType     QuestionType
+  questionNumber   String
+  questionContent  String
+  pdfPage          Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  pastExamKorean   pastExamKorean @relation(fields: [pastExamKoreanId], references: [id])
+}
