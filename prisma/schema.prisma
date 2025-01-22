@@ -146,10 +146,22 @@ model User {
   transactions      BerryTransaction[]
   inquiries         Inquiry[]
   AiFreeCount       Int      @default(2)
-  purchaseItems     PurchaseItem[]
   saleHistories     SaleHistory[]
   exchanges         ExchangeRequest[]
   createdAt         DateTime  @default(now())
+}
+
+model BankAccount {
+  id             String @id @default(uuid())
+  bankName       BankName
+  accountNumber  Int
+  accountHolder  String
+}
+
+enum BankName {
+  국민은행
+  신한은행
+  우리은행
 }
 
 model ExchangeRequest {
@@ -290,7 +302,7 @@ user          User           @relation(fields: [userId], references: [id])
 amount        Int
 type          TransactionType
 paymentMethod PaymentMethod
-createdAt     DateTime       @defaultAt
+createdAt     DateTime       @default(now()) 
 description   String
 }
 
@@ -304,7 +316,7 @@ model exchangeLog {
   status                      WithdrawalStatus   
   withdrawalDate              DateTime  @default(now()) 
   bankAccount                 BankAccount @relation(fields: [userId], references: [userId])
-  createdAt                   DateTime @default
+  createdAt                   DateTime @default(now()) 
 
 
 }
