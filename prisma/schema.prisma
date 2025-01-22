@@ -87,6 +87,21 @@ enum InquiryType {
   SUGGESTION  // 건의 사항
   OTHER       // 기타
 }
+
+
+enum TransactionType {
+  EARNING //적립
+  CHARGE  //충전
+  USAGE   //사용
+  REFUND  //환불
+}
+
+enum PaymentMethod {
+  CREDIT_CARD 
+  BANK_TRANSFER
+  DEPOSIT
+}
+
 model pastExamKorean {
   id                      Int                       @id @default(autoincrement())
   examType                ExamType
@@ -259,4 +274,15 @@ model Inquiry {
   message    String
   email      String
   contact    String
+}
+
+model BerryTransaction{
+id            Int            @id @default(autoincrement())   
+userId        Int
+user          User           @relation(fields: [userId], references: [id]) 
+amount        Int
+type          TransactionType
+paymentMethod PaymentMethod
+createdAt     DateTime       @defaultAt
+description   String?     
 }
